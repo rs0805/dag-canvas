@@ -8,7 +8,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:3000'],
+    allow_origins=['https://dag-canvas.vercel.app'],
     allow_methods=['*'],
     allow_headers=['*'],
 )
@@ -31,9 +31,6 @@ class Pipeline(BaseModel):
 
 
 def is_dag(nodes: list[Node], edges: list[Edge]) -> bool:
-    # Kahn's algorithm: a graph is a DAG iff a topological order
-    # consumes every node. Edges referencing unknown ids are skipped
-    # so an in-progress canvas still parses cleanly.
     node_ids = {n.id for n in nodes}
     in_degree = {nid: 0 for nid in node_ids}
     adjacency = {nid: [] for nid in node_ids}
