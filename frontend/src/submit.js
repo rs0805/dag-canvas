@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useStore } from './store';
 
-const PARSE_ENDPOINT =`${import.meta.env.VITE_API_URL}/pipelines/parse`;
+const PARSE_ENDPOINT =`${process.env.REACT_APP_API_URL}/pipelines/parse`;
 
 const selector = (state) => ({ nodes: state.nodes, edges: state.edges });
 
