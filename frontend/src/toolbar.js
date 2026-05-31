@@ -1,7 +1,7 @@
-import { DraggableNode } from './draggableNode';
+import { ClickableNode } from './draggableNode';
 import { nodeConfigs, nodeGroups } from './nodes/nodeConfigs';
 
-export const PipelineToolbar = () => {
+export const PipelineToolbar = ({ pendingType, onSelect }) => {
     return (
         <div
             style={{
@@ -40,12 +40,14 @@ export const PipelineToolbar = () => {
                         const cfg = nodeConfigs[type];
                         if (!cfg) return null;
                         return (
-                            <DraggableNode
+                            <ClickableNode
                                 key={type}
                                 type={type}
                                 label={cfg.toolbarLabel}
                                 Icon={cfg.icon}
                                 accent={cfg.accent}
+                                pendingType={pendingType}
+                                onSelect={onSelect}
                             />
                         );
                     })}

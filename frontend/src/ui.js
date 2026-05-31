@@ -24,7 +24,7 @@ const selector = (state) => ({
   setSelectedNodeId: state.setSelectedNodeId,
 });
 
-export const PipelineUI = () => {
+export const PipelineUI = ({ pendingType, setPendingType }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const {
@@ -43,43 +43,27 @@ export const PipelineUI = () => {
       return nodeData;
     }
 
-    const onDrop = useCallback(
-        (event) => {
-          event.preventDefault();
+    const onPaneClick = useCallback(
+      (event) => {
+        if (!pendingType) return;
+        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+          x: event.clientX - reactFlowBounds.left,
+          y: event.clientY - reactFlowBounds.top,
+        });
     
-          const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-          if (event?.dataTransfer?.getData('application/reactflow')) {
-            const appData = JSON.parse(event.dataTransfer.getData('application/reactflow'));
-            const type = appData?.nodeType;
-      
-            // check if the dropped element is valid
-            if (typeof type === 'undefined' || !type) {
-              return;
-            }
-      
-            const position = reactFlowInstance.project({
-              x: event.clientX - reactFlowBounds.left,
-              y: event.clientY - reactFlowBounds.top,
-            });
-
-            const nodeID = getNodeID(type);
-            const newNode = {
-              id: nodeID,
-              type,
-              position,
-              data: getInitNodeData(nodeID, type),
-            };
-      
-            addNode(newNode);
-          }
-        },
-        [reactFlowInstance, getNodeID, addNode]
+        const nodeID = getNodeID(pendingType);
+        const newNode = {
+          id: nodeID,
+          type: pendingType,
+          position,
+          data: getInitNodeData(nodeID, pendingType),
+        };
+        addNode(newNode);
+        setPendingType(null);  
+      },
+      [reactFlowInstance, pendingType, setPendingType, getNodeID, addNode]
     );
-
-    const onDragOver = useCallback((event) => {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-    }, []);
 
     return (
         <>
@@ -90,22 +74,36 @@ export const PipelineUI = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
                 onInit={setReactFlowInstance}
+                onPaneClick={onPaneClick}
                 onSelectionChange={({ nodes: selected }) => {
                   setSelectedNodeId(selected && selected[0] ? selected[0].id : null);
                 }}
-                onPaneClick={() => setSelectedNodeId(null)}
                 nodeTypes={nodeTypes}
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 connectionLineType='smoothstep'
+                style={{ cursor: pendingType ? 'crosshair' : 'default' }}
             >
                 <Background color="#aaa" gap={gridSize} />
                 <Controls />
                 <MiniMap />
             </ReactFlow>
+            <div
+              style={{
+                  position: 'absolute',
+                  top: 16,
+                  right: 20,
+                  zIndex: 10,
+                  fontSize: 15,
+                  fontWeight: 600,
+                  letterSpacing: 0.1,
+                  color: '#44403C',
+                  pointerEvents: 'none',
+              }}
+          >
+              Vector<span style={{ color: '#B45309' }}>Shift</span>
+          </div>
         </div>
         </>
     )

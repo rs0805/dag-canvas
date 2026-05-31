@@ -2,8 +2,10 @@ import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
 import { SubmitButton } from './submit';
 import { LeftPalette, SelectionHint } from './leftPalette';
+import { useState } from 'react';
 
 function App() {
+  const [pendingType, setPendingType] = useState(null);
   return (
     <div
       style={{
@@ -17,7 +19,7 @@ function App() {
       }}
     >
       <div style={{ position: 'absolute', inset: 0 }}>
-        <PipelineUI />
+        <PipelineUI pendingType={pendingType} setPendingType={setPendingType} />
       </div>
 
       <div
@@ -29,7 +31,7 @@ function App() {
           zIndex: 10,
         }}
       >
-        <PipelineToolbar />
+        <PipelineToolbar pendingType={pendingType} onSelect={setPendingType} /> {/* ← fixed */}
       </div>
 
       <div
@@ -52,7 +54,7 @@ function App() {
           zIndex: 10,
         }}
       >
-        <LeftPalette />
+        <LeftPalette />  {/* ← removed unnecessary props */}
       </div>
 
       <div

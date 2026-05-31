@@ -16,9 +16,6 @@ const handleStyle = (stroke) => ({
   border: `2px solid ${stroke}`,
 });
 
-// Floating label rendered next to a handle. Sits OUTSIDE the node body
-// (right:100% for left handles, left:100% for right handles) so it never
-// overlaps the node's content.
 const handleLabelStyle = (h, stroke) => {
   const isLeft = h.position === 'left';
   return {
@@ -55,9 +52,6 @@ const fieldStyle = {
   fontFamily: 'inherit',
 };
 
-// Textarea that grows to fit its content. We reset height to 'auto' first so
-// scrollHeight reflects the natural content height; otherwise the previously
-// set height would clamp it and the textarea could never shrink.
 const AutoTextarea = ({ value, onChange }) => {
   const ref = useRef(null);
   useLayoutEffect(() => {

@@ -1,8 +1,5 @@
 const VAR_RE = /\{\{\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*\}\}/g;
 
-// Reserved words that cannot be used as JS variable names. Used to reject
-// patterns like {{ class }} or {{ function }} which match the identifier
-// regex but would be syntax errors as actual JS variables.
 const RESERVED = new Set([
   'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger',
   'default', 'delete', 'do', 'else', 'export', 'extends', 'false',

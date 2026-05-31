@@ -1,24 +1,16 @@
 import { useState } from 'react';
 
-export const DraggableNode = ({ type, label, Icon, accent }) => {
+export const ClickableNode = ({ type, label, Icon, accent, pendingType, onSelect }) => {
     const [hover, setHover] = useState(false);
-    const [dragging, setDragging] = useState(false);
 
-    const onDragStart = (event, nodeType) => {
-      const appData = { nodeType };
-      event.target.style.cursor = 'grabbing';
-      event.dataTransfer.setData('application/reactflow', JSON.stringify(appData));
-      event.dataTransfer.effectAllowed = 'move';
-      setDragging(true);
-    };
+    const selected = pendingType === type;
 
-    const onDragEnd = (event) => {
-      event.target.style.cursor = 'grab';
-      setDragging(false);
+    const onClick = () => {
+      onSelect(type);
     };
 
     const base = {
-      cursor: 'grab',
+      cursor: 'pointer',
       width: 36,
       height: 36,
       display: 'inline-flex',
@@ -27,8 +19,7 @@ export const DraggableNode = ({ type, label, Icon, accent }) => {
       borderRadius: 8,
       background: 'transparent',
       color: accent || '#44403C',
-      transition:
-        'background-color 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease',
+      transition: 'background-color 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease',
       userSelect: 'none',
       position: 'relative',
     };
@@ -40,7 +31,7 @@ export const DraggableNode = ({ type, label, Icon, accent }) => {
         }
       : null;
 
-    const dragStyle = dragging
+    const selectedStyle = selected
       ? {
           background: accent ? `${accent}26` : '#EEF2FF',
           boxShadow: `0 4px 12px ${accent ? `${accent}33` : 'rgba(99,102,241,0.18)'}`,
@@ -53,15 +44,13 @@ export const DraggableNode = ({ type, label, Icon, accent }) => {
       <div
         className={type}
         aria-label={label}
-        onDragStart={(event) => onDragStart(event, type)}
-        onDragEnd={onDragEnd}
+        onClick={onClick}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        style={{ ...base, ...hoverStyle, ...dragStyle }}
-        draggable
+        style={{ ...base, ...hoverStyle, ...selectedStyle }}
       >
         {Icon && <Icon size={18} />}
-        {hover && !dragging && (
+        {hover && !selected && (
           <div
             role="tooltip"
             style={{
